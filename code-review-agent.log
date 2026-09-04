@@ -1,3 +1,6 @@
 2026-09-04 11:14:53,955 INFO    cragent.runner scan started path=samples config=thread-safety-only.yaml
 2026-09-04 11:14:53,956 INFO    cragent.discovery discovered 1 files, skipped 0 under /workspaces/Testing-repo/samples
 2026-09-04 11:14:53,983 INFO    cragent.runner scan finished score=50.0 gate=FAIL files=1 findings=1 errors=0
+2026-09-04 11:21:05,853 INFO    cragent.runner scan started path=samples config=thread-safety-only.yaml
+2026-09-04 11:21:05,854 INFO    cragent.discovery discovered 1 files, skipped 0 under /workspaces/Testing-repo/samples
+2026-09-04 11:21:05,869 INFO    cragent.runner scan finished score=100.0 gate=PASS files=1 findings=0 errors=0

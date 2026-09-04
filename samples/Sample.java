@@ -1,8 +1,12 @@
-public class Sample {
-    // Bug: SimpleDateFormat is not thread-safe but is shared via a static field.
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
+import java.util.Date;
 
-    public String today(java.util.Date date) {
-        return formatter.format(date);
+public class Sample {
+    // DateTimeFormatter is immutable and thread-safe, unlike SimpleDateFormat.
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    public String today(Date date) {
+        return FORMATTER.format(date.toInstant().atZone(ZoneId.systemDefault()));
     }
 }
