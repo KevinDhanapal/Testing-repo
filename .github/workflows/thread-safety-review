@@ -1,0 +1,36 @@
+name: Thread Safety Review
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  thread-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run thread-safety scan
+        run: python run.py --path . --config thread-safety-only.yaml --out thread-safety-report.json
+
+      - name: Fail if thread-safety findings were reported
+        run: |
+          python -c "
+          import json, sys
+          with open('thread-safety-report.json') as f:
+              report = json.load(f)
+          total = report.get('total_findings', 0)
+          if total:
+              print(f'Thread-safety review found {total} finding(s).', file=sys.stderr)
+              sys.exit(1)
+          print('No thread-safety findings.')
+          "
