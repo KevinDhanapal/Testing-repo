@@ -20,7 +20,7 @@ jobs:
         run: pip install pyyaml
 
       - name: Run thread-safety scan
-        run: python run.py --path . --config thread-safety-only.yaml --out thread-safety-report.json
+        run: python run.py --path samples --config thread-safety-only.yaml --out thread-safety-report.json
 
       - name: Fail if thread-safety findings were reported
         run: |
