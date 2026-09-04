@@ -1,0 +1,119 @@
+# Code Review Agent configuration scoped to the thread-safety dimension only.
+schema_version: "1.0"
+
+languages:
+  java:
+    enabled: true
+    extensions: [".java"]
+  python:
+    enabled: true
+    extensions: [".py", ".pyi"]
+  javascript:
+    enabled: true
+    extensions: [".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx"]
+
+limits:
+  max_files: 5000
+  max_file_size_bytes: 1048576
+  max_workers: 8
+  max_findings_per_dimension: 200
+
+thresholds:
+  quality_gate: 80
+  dimension_pass: 80
+
+severity_penalties:
+  Critical: 15
+  Major: 7
+  Minor: 2
+
+scoring:
+  mode: density
+  penalty_budget_per_kloc: 30
+  min_kloc: 1.0
+
+ignore:
+  patterns:
+    - ".git/"
+    - "node_modules/"
+    - "__pycache__/"
+    - ".venv/"
+    - "venv/"
+    - "target/"
+    - "build/"
+    - "dist/"
+    - "*.min.js"
+    - "*.bundle.js"
+    - "generated/"
+  test_patterns:
+    - "src/test/"
+    - "tests/"
+    - "test/"
+    - "*_test.py"
+    - "test_*.py"
+    - "*.test.js"
+    - "*.spec.js"
+    - "*Test.java"
+    - "*Tests.java"
+    - "*IT.java"
+  production_only_dimensions:
+    - "modularity"
+    - "maintainability"
+
+dimensions:
+  maintainability:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  readability:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  modularity:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  coding_standards:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  naming_conventions:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  duplication:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  exception_handling:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  security:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  configuration_handling:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  database_access:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  test_readiness:
+    enabled: false
+    weight: 0
+    thresholds: {}
+  thread_safety:
+    enabled: true
+    weight: 100
+    thresholds: {}
+  performance:
+    enabled: false
+    weight: 0
+    thresholds: {}
+
+logging:
+  file: "code-review-agent.log"
+  level: "INFO"

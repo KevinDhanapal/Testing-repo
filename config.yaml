@@ -1,0 +1,142 @@
+# Code Review Agent configuration.
+# Every threshold, weight and limit used by the engine lives here.
+schema_version: "1.0"
+
+languages:
+  java:
+    enabled: true
+    extensions: [".java"]
+  python:
+    enabled: true
+    extensions: [".py", ".pyi"]
+  javascript:
+    enabled: true
+    extensions: [".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx"]
+
+limits:
+  max_files: 5000            # scan stops (with a warning) beyond this many files
+  max_file_size_bytes: 1048576   # 1 MiB - larger files are skipped
+  max_workers: 8             # parallel file workers; 1 disables the pool
+  max_findings_per_dimension: 200
+
+thresholds:
+  quality_gate: 80           # overall weighted score needed to PASS
+  dimension_pass: 80         # per-dimension score needed to PASS
+
+severity_penalties:          # points deducted from a dimension's 100 per finding
+  Critical: 15
+  Major: 7
+  Minor: 2
+
+scoring:
+  # "density" scales the penalty budget with code size so a large repo is judged
+  # on issue density, not raw counts. "absolute" is the raw 100 - penalties.
+  mode: density
+  penalty_budget_per_kloc: 30   # penalty points per KLOC that take a score to 0
+  min_kloc: 1.0                 # floor so a tiny file is not scored on a fraction
+
+ignore:
+  # Always-on directory/file globs, merged with any .reviewignore file found.
+  patterns:
+    - ".git/"
+    - "node_modules/"
+    - "__pycache__/"
+    - ".venv/"
+    - "venv/"
+    - "target/"
+    - "build/"
+    - "dist/"
+    - "*.min.js"
+    - "*.bundle.js"
+    - "generated/"
+  test_patterns:
+    - "src/test/"
+    - "tests/"
+    - "test/"
+    - "*_test.py"
+    - "test_*.py"
+    - "*.test.js"
+    - "*.spec.js"
+    - "*Test.java"
+    - "*Tests.java"
+    - "*IT.java"
+  # Dimensions whose thresholds describe production structure. Test stubs and
+  # fixtures legitimately break them, so test files are exempt from these.
+  production_only_dimensions:
+    - "modularity"
+    - "maintainability"
+
+dimensions:
+  maintainability:
+    enabled: true
+    weight: 10
+    thresholds:
+      max_complexity: 10
+      max_function_lines: 60
+      max_nesting_depth: 4
+  readability:
+    enabled: true
+    weight: 6
+    thresholds:
+      max_line_length: 140
+      max_parameters: 6
+      documentation_min_ratio: 0.5
+      min_public_lines_for_doc: 15
+  modularity:
+    enabled: true
+    weight: 8
+    thresholds:
+      max_file_lines: 400
+      max_class_lines: 300
+      max_methods_per_class: 20
+      max_fields_per_class: 15
+  coding_standards:
+    enabled: true
+    weight: 6
+    thresholds:
+      max_todo_comments: 0
+      tab_indentation_allowed: false
+  naming_conventions:
+    enabled: true
+    weight: 6
+    thresholds:
+      min_identifier_length: 2
+  duplication:
+    enabled: true
+    weight: 8
+    thresholds:
+      min_duplicate_lines: 6
+      min_duplicate_tokens: 25
+  exception_handling:
+    enabled: true
+    weight: 8
+    thresholds: {}
+  security:
+    enabled: true
+    weight: 12
+    thresholds: {}
+  configuration_handling:
+    enabled: true
+    weight: 6
+    thresholds: {}
+  database_access:
+    enabled: true
+    weight: 6
+    thresholds: {}
+  test_readiness:
+    enabled: true
+    weight: 4
+    thresholds:
+      min_test_file_ratio: 0.2
+  thread_safety:
+    enabled: true
+    weight: 12
+    thresholds: {}
+  performance:
+    enabled: true
+    weight: 8
+    thresholds: {}
+
+logging:
+  file: "code-review-agent.log"
+  level: "INFO"
